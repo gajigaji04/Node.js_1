@@ -40,5 +40,3 @@ app.get("/:id", (req, res) => {
 app.on("error", (err) => {
   console.error("Server error:", err);
 });
-
-//
