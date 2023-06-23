@@ -1,40 +1,39 @@
 const express = require("express");
 const app = express();
-const port = 3000; // 포트 번호 변경
+const port = 3000;
 
-const cartRouter = require("./routers/cart.js");
-const goodsRouter = require("./routers/goods.js");
-const connect = require("./schemas");
-connect();
+const cookieParser = require("cookie-parser");
+
+app.use(cookieParser());
+const authMiddlewares = require("./middlewares/auth-middlewares");
+
+const postsRouter = require("./routes/posts");
+const commentsRouter = require("./routes/comments");
+const usersRouter = require("./routes/users");
+const authRouter = require("./routes/auth");
 
 app.use(express.json());
-app.use("/api", [cartRouter, goodsRouter]);
+app.use("/api", [postsRouter, commentsRouter, usersRouter, authRouter]);
+
+const connect = require("./schemas");
+connect();
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
+app.post("/signup", (req, res) => {
+  res.send("회원 가입에 성공하셨습니다.");
+});
+
+app.post("/login", (req, res) => {
+  // 토큰 생성 로직 추가 필요
+  const token = "your-generated-token";
+  res.send(token);
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
-});
-
-app.post("/", (req, res) => {
-  res.send("기본 URI에 POST 메소드가 정상적으로 실행되었습니다.");
-});
-
-app.get("/", (req, res) => {
-  const obj = {
-    "'KeyKey": "value입니다.",
-    이름입니다: "이름일까요?",
-  };
-
-  res.json(obj);
-});
-
-app.get("/:id", (req, res) => {
-  console.log(req.params);
-
-  res.send(":id URI에 정상적으로 반환되었습니다.");
 });
 
 app.on("error", (err) => {
